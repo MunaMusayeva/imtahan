@@ -1,23 +1,26 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Loading from "@/components/loading";
 
 const Blog = ({ params }) => {
-  const { id } = React.use(params);
-  const [user, setUser] = useState({});
+  const { id } = params;
+  const [user, setUser] = useState(null);
   const [blog, setBlog] = useState();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const getBlog = async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/blogs/${id}`);
       const data = await response.json();
-      setBlog(data.blog);
+      setBlog(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -27,14 +30,15 @@ const Blog = ({ params }) => {
 
   const getUser = async () => {
     try {
-      setLoading(true);
       const supabase = createClient();
       const myUser = await supabase.auth.getUser();
-      setUser(myUser.data.user);
+      if (!myUser?.data?.user?.id) {
+        router.push("/sign-in");
+      } else {
+        setUser(myUser.data.user);
+      }
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -43,7 +47,7 @@ const Blog = ({ params }) => {
     getBlog();
   }, []);
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="flex justify-center items-center mt-[50px]">
         <Loading />
@@ -66,6 +70,7 @@ const Blog = ({ params }) => {
             {blog?.title}
           </p>
         )}
+
         <Link
           href={
             user.id == blog?.authors?.id
@@ -92,6 +97,7 @@ const Blog = ({ params }) => {
           )}
         </Link>
       </div>
+
       {blog?.thumbnail && (
         <img
           alt={blog?.thumbnail}

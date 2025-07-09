@@ -119,16 +119,6 @@ const AddBlog = () => {
           placeholder="Add thumbnail image"
           className="w-[700px] mt-[20px] pl-[20px] py-[20px] text-[16px] leading-[28px] text-[#232536] border-[2px] border-gray-500 rounded-[5px]"
         />
-
-        {/* <textarea
-          value={blog.body}
-          onChange={(e) =>
-            setBlog((prevState) => ({ ...prevState, body: e.target.value }))
-          }
-          placeholder="Add blog body"
-          className="w-[700px] h-[350px] mt-[20px] px-[30px] py-[30px] text-[16px] leading-[28px] text-[#232536] border-[2px] border-gray-500 rounded-[5px]"
-        /> */}
-
         <TextEditor setBlogBody={setBlogBody} />
 
         <button
